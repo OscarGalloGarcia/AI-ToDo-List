@@ -1,0 +1,16 @@
+{
+  "enabledMcpjsonServers": [
+    "engram",
+    "context7"
+  ],
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
+  "permissions": {
+    "allow": [
+      "Bash(git commit:*)",
+      "Bash(git push:*)"
+    ]
+  }
+}
