@@ -4,3 +4,8 @@
 # Herramienta de diseño de terceros (binarios pesados, no forma parte del proyecto)
 .claude/skills/impeccable/
 .claude/agents/impeccable-*.md
+
+# Secretos (llaves de Azure, GitHub)
+.env
+.env.*
+!.env.example
