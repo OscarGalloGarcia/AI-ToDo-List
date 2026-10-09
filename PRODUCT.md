@@ -45,6 +45,8 @@ Las tareas se conversan, no solo se teclean: un asistente de voz (STT → LLM �
 **Existe hoy (v0)**: agregar, marcar como hecha y borrar tareas, con persistencia en `localStorage`. No permite tareas vacías y borra sin pedir confirmación.
 
 **Planeado** (detalle en `docs/PRD.md`):
+- Las tareas completadas pasan a una sección "Completadas" plegada, como en Recordatorios, en lugar de quedarse tachadas en su lugar. Esto cambia el spec `lista-tareas` y se formalizará en el change `redesign-premium-ui`.
+- Cada fase muestra solo controles que ya funcionan: la barra lateral de repos llega con GitHub y el micrófono con el asistente.
 - Asistente de voz: Azure AI Speech (STT y TTS) con Azure OpenAI (deployment `gpt-5.3`) y tool calling. Pulsar para hablar, transcripción visible, confirmación antes de borrar por voz, deshacer y desambiguación.
 - GitHub: listar los repos del usuario (solo lectura), ligar una tarea a un repo y filtrar por repo.
 
@@ -62,6 +64,7 @@ Las tareas se conversan, no solo se teclean: un asistente de voz (STT → LLM �
 
 - Nombre: **AI ToDo List** (repositorio `AI-ToDo-List`).
 - Dirección indicada por el usuario: **diseño UX/UI premium y minimalista, al estilo de Apple**. Es una restricción vinculante. Sin usar marcas, logotipos ni recursos propietarios de Apple.
+- **Dirección visual elegida (2026-10-09): el estándar de la categoría**, ejecutado con el máximo cuidado y sin ironía ni rarezas escondidas. El usuario la eligió a propósito frente a direcciones más arriesgadas. La vara de calidad son **Recordatorios de Apple** (estructura, calma, casillas circulares, color por lista) y **Linear** (uso con teclado primero, precisión, velocidad).
 - Voz del producto: español de México, directo y breve.
 
 ## Evidence on Hand
