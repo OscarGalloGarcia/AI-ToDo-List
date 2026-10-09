@@ -91,7 +91,7 @@ Uso **personal, de un solo usuario**: el propio autor, desarrollador que trabaja
 - B7. **Desambiguación**: si un comando coincide con varias tareas ("borra la del PR"), el asistente pregunta cuál.
 - B8. **Interrupción**: tocar el micrófono mientras el asistente habla corta el TTS y empieza a escuchar.
 - B9. Cada acción hecha por voz se refleja en la lista con la misma animación que si se hubiera hecho a mano, y se puede **deshacer** durante unos segundos.
-- B10. Idioma: español. Locale y voz configurables (ver preguntas abiertas).
+- B10. Idioma: español de México (`es-MX`) para el reconocimiento y la síntesis de voz. La voz neural se puede configurar.
 - B11. Un historial breve de la conversación (la sesión actual), que se puede plegar.
 
 **Objetivos de latencia** (desde que el usuario termina de hablar):
@@ -114,7 +114,7 @@ Uso **personal, de un solo usuario**: el propio autor, desarrollador que trabaja
 
 ```
 +---------------------------- Navegador ----------------------------+
-|  UI (HTML/CSS/JS, sistema de diseño impeccable)                    |
+|  UI en Svelte 5 + Vite (sistema de diseño impeccable)              |
 |  Estado de tareas en localStorage  <-- ejecuta acciones del LLM   |
 |  Azure Speech SDK (STT/TTS) con token temporal                     |
 +------------------+-------------------------------------------------+
@@ -132,7 +132,8 @@ Uso **personal, de un solo usuario**: el propio autor, desarrollador que trabaja
 - **D2. Speech con token temporal.** El backend intercambia la llave de Speech por un token de unos 10 min; el navegador usa el Speech SDK con ese token (STT en streaming con resultados parciales y TTS con voz neural). La llave nunca sale del servidor.
 - **D3. Pipeline STT → LLM → TTS separado**, tal como se pidió. *Alternativa considerada*: un modelo *realtime* de voz a voz, con menos latencia pero menos control sobre STT y TTS por separado y más costo. Se puede reevaluar si no se cumple la latencia.
 - **D4. Streaming del LLM hacia TTS**: sintetizar por frases a medida que llega la respuesta, para cumplir el objetivo de latencia.
-- **D5. Backend mínimo** en un solo proceso que también sirve los estáticos (Node o Python, ver preguntas abiertas), escuchando solo en `127.0.0.1`.
+- **D5. Backend mínimo en Node**, en un solo proceso que también sirve el frontend compilado y escucha solo en `127.0.0.1`. En desarrollo, el servidor de Vite reenvía `/api/*` al backend. Se eligió Node para usar un solo lenguaje en todo el proyecto. *Alternativa descartada*: Python (FastAPI).
+- **D7. Frontend en Svelte 5 + Vite.** Genera poco código y su runtime es pequeño. Además trae transiciones y animación de listas incluidas (`transition:`, `animate:flip`), que cubren las microinteracciones de A3 sin dependencias extra, y el estado reactivo (`$state`) modela con naturalidad los estados del asistente (B4). *Alternativa descartada*: React, que tiene más ecosistema y alcance como caso de estudio, pero necesita más código y una librería aparte para las animaciones.
 - **D6. Modelo de datos de tarea**, que extiende el actual de forma retrocompatible:
   ```json
   { "id": "uuid", "texto": "…", "hecha": false, "creada": "ISO-8601",
@@ -192,7 +193,7 @@ Las dos herramientas se combinan así: **impeccable decide *cómo se ve y se sie
 | Fase | Change de OpenSpec | Contenido | Depende de |
 |---|---|---|---|
 | 0 | — | `impeccable init` + `shape`: PRODUCT.md, brief y dirección visual | — |
-| 1 | `redesign-premium-ui` | Rediseño completo de la lista actual con el nuevo sistema de diseño (A1–A7) | 0 |
+| 1 | `redesign-premium-ui` | Migración de la v0 a Svelte 5 + Vite y rediseño completo con el nuevo sistema de diseño (A1–A7), conservando el comportamiento del spec `lista-tareas` | 0 |
 | 2 | `add-backend-proxy` | Backend local, `.env`, `.env.example`, servir estáticos, endpoint de token de Speech | — |
 | 3 | `add-github-repos` | Listado de repos, ligar tareas, chip y filtro por repo (C1–C6), modelo de datos D6 | 1, 2 |
 | 4 | `add-voice-assistant` | STT → LLM → TTS, tool calling, estados, confirmación, deshacer (B1–B11) | 1, 2, 3 |
@@ -221,10 +222,10 @@ GitHub va antes que la voz para que el asistente pueda ligar tareas a repos desd
 
 ## 12. Preguntas abiertas
 
-1. **Stack del backend**: ¿Node (mismo lenguaje que el frontend) o Python (FastAPI)? *Recomendación*: Node con un servidor mínimo, para no tener dos lenguajes.
+1. ~~Stack~~ **Resuelta**: frontend en Svelte 5 + Vite (D7) y backend en Node (D5). Falta decidir, al proponer `add-backend-proxy`, si el backend es un servidor Node aparte o rutas de servidor de SvelteKit, que también mantendrían los secretos fuera del navegador.
 2. ~~Modelo del LLM~~ **Resuelta**: Azure OpenAI con el deployment `gpt-5.3`. Falta fijar `AZURE_OPENAI_API_VERSION` con una versión que admita tool calling y streaming para ese modelo.
 3. **Autenticación con GitHub**: ¿token personal en `.env` (más simple, uso personal) o flujo OAuth? *Recomendación*: token *fine-grained* en `.env` para v1.
-4. **Locale y voz**: ¿`es-MX`, `es-ES` u otro? ¿Qué voz neural?
+4. **Voz**: el locale ya está resuelto (`es-MX`). Falta elegir la voz neural concreta.
 5. **"Revisar repositorios"**: ¿basta con la información de C2 o se quieren ver issues o commits recientes dentro de la app?
 6. **¿Una tarea puede ligarse a varios repos?** v1 asume uno.
 7. **Persistencia**: ¿se mantiene `localStorage` (D1) o se quiere acceder desde varios dispositivos (eso implicaría mover las tareas al servidor)?
